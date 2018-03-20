@@ -4,4 +4,5 @@
 :)
 
 let $db := doc("mondial.xml")
-return $db//country[ //geolake/country ne /name ]/name
+(: If there's no located_on attribute, then the country does not have any islands. :)
+return $db//country[ not(/located_on) ]/name
