@@ -10,14 +10,14 @@
 
 (:
 
-  SPHERICAL LAW OF COSINES:
+  HAVERSINE: Calc dist between two lat/long pairs
 
-  6371*math:acos(math:sin($city1/latitude*math:pi() div 180)*math:sin($city2/latitude*math:pi() div 180)+math:cos($city1/latitude*math:pi() div 180)*math:cos($city2/latitude*math:pi() div 180)*math:cos(($city2/longitude*math:pi() div 180)-($city1/longitude*math:pi() div 180)))
-  +
-  6371*math:acos(math:sin($city1/latitude*math:pi() div 180)*math:sin($lat3*math:pi() div 180)+math:cos($city1/latitude*math:pi() div 180)*math:cos($lat3*math:pi() div 180)*math:cos(($long3*math:pi() div 180)-($city1/longitude*math:pi() div 180)))
-  +
-  6371*math:acos(math:sin($lat3*math:pi() div 180)*math:sin($city2/latitude*math:pi() div 180)+math:cos($lat3*math:pi() div 180)*math:cos($city2/latitude*math:pi() div 180)*math:cos(($city2/longitude*math:pi() div 180)-($long3*math:pi() div 180)))
-
+  6371*2.0*2*math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
+  (($city1/latitude/data()-$city2/latitude/data()) div 2.0)),2))+
+  (math:cos((3.14 div 180)*($city1/latitude/data()))*
+  math:cos((3.14 div 180)*($city2/latitude/data()))*
+  math:pow(math:sin((3.14 div 180)
+  *(($city1/longitude/data()-$city2/longitude/data()) div 2.0)),2))))
 :)
 
 let $db := doc("mondial.xml"),
@@ -32,13 +32,14 @@ let $db := doc("mondial.xml"),
         where data($city1/name) < data($city2/name)
         return
           <triLeg city1="{$city1/name}" city2="{$city2/name}">
-            {6371*2.0*2*
-              math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
+            {
+              6371*2.0*2*math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
               (($city1/latitude/data()-$city2/latitude/data()) div 2.0)),2))+
               (math:cos((3.14 div 180)*($city1/latitude/data()))*
               math:cos((3.14 div 180)*($city2/latitude/data()))*
               math:pow(math:sin((3.14 div 180)
-              *(($city1/longitude/data()-$city2/longitude/data()) div 2.0)),2))))}
+              *(($city1/longitude/data()-$city2/longitude/data()) div 2.0)),2))))
+            }
           </triLeg>
       ),
 
