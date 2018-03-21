@@ -13,7 +13,17 @@
 
 let $db := doc("mondial.xml"),
         $islandlakes := $db//island[@lake]/@lake,
-        $lakes := $db//lake[@id = $islandlakes]
-
-
-return $lakes
+        $lakes := $db//lake[@id = $islandlakes],
+        $continents := $db//continent,
+        $countries := $db//country,
+        $res :=
+        for $cont in $continents
+        <continent name="{$cont}">
+                {
+                        fn:sum (
+                        for $lake in $lakes
+                        return (1 + ($db//country[@car_code = $lake/@country and lower-case(/encompassed/@continent) = $cont]/encompassed/@percentage) div 100) * $lake/data(area)
+                        )
+                }
+        <\continent>
+return $res
