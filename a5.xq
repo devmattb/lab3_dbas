@@ -7,4 +7,16 @@
 
 :)
 
-let $db := doc("mondial.xml")
+let $db := doc("mondial.xml"),
+$international := $db//organization[matches(name/string(), 'International')],
+$cities := $db//city,
+$ineurope :=
+for $comp in $international
+return
+        if($cities[@id = $comp/@headq and $db//country[@car_code = @country and encompassed/@continent = 'europe']])
+        then $comp
+        else
+        ()
+return $ineurope
+
+(: :)
