@@ -34,7 +34,7 @@
       for $country in $db//country[data(encompassed/@continent) = "africa"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow(data((1+($country/population_growth) div 100)), 50)
     )
     div
     (: Current Population :)
@@ -50,7 +50,7 @@
       for $country in $db//country[data(encompassed/@continent) = "america"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow((1+(data($country/population_growth) div 100)), 50)
     )
     div
     (: Current Population :)
@@ -66,7 +66,7 @@
       for $country in $db//country[data(encompassed/@continent) = "asia"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow((1+(data($country/population_growth) div 100)), 50)
     )
     div
     (: Current Population :)
@@ -82,7 +82,7 @@
       for $country in $db//country[data(encompassed/@continent) = "australia"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow((1+(data($country/population_growth) div 100)), 50)
     )
     div
     (: Current Population :)
@@ -98,7 +98,7 @@
       for $country in $db//country[data(encompassed/@continent) = "europe"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow((1+(data($country/population_growth) div 100)), 50)
     )
     div
     (: Current Population :)
