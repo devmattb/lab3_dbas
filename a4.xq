@@ -120,4 +120,4 @@ $min := min(
   $fPopRatioAustralia, $fPopRatioEurope)
 )
 
-return $max
+return ($max, $min)
