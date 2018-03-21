@@ -4,8 +4,8 @@
 
   Backgorund:
   Consider land border crossings. Starting in Sweden, you can
-  reach Norway and Finland withone border crossing. Russia with
-  two. A whole host of countries with 3, and so on. Thisassumes,
+  reach Norway and Finland with one border crossing. Russia with
+  two. A whole host of countries with 3, and so on. This assumes,
   of course, that you are never allowed to double back over a
   border you’ve crossed already.
 
