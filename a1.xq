@@ -5,8 +5,8 @@
 :)
 
 let $db := doc("mondial.xml"),
-        $c := $db/mondial/country,
-        $island:= distinct-values($db/mondial/island/@country),
-        $res := $c[not(exists(@car_code = $island ))]
-return $res/@name
+        $c := $db//country,
+        $island:= distinct-values($db//island/@country),
+        $res := $c[not(@car_code = $island)]/data(name)
+return $res
 (: If there's no located_on attribute, then the country does not have any islands. :)

@@ -50,7 +50,7 @@
       for $country in $db//country[data(encompassed/@continent) = "america"]
       return
         data($country/population[@year = "2011"]) *
-        math:pow(data($country/population_growth), 50)
+        math:pow(1 plus (data($country/population_growth) div 100), 50)
     )
     div
     (: Current Population :)
