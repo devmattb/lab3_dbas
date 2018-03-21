@@ -43,4 +43,4 @@
             ))
         }
       </continent>
-return $res
+return $res[data() = max(data($res)) or data() = min(data($res)) ]
