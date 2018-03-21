@@ -10,7 +10,7 @@
 
 :)
 
-let $db := doc("mondial.xml"),
+  let $db := doc("mondial.xml"),
   (:
 
       Calculate each individual country's future population.
@@ -27,50 +27,97 @@ let $db := doc("mondial.xml"),
 
   :)
 
-$allFuturePopSums := (
-
   (: AFRICA :)
-  fn:sum (
-    for $country in $db//country[data(encompassed/@continent) = "africa"]
-    return
-      data($country/population[@year = "2011"]) *
-      math:pow(data($country/population_growth), 50)
-  ),
+  $fPopRatioAfrica :=
+    (: Future Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "africa"]
+      return
+        data($country/population[@year = "2011"]) *
+        math:pow(data($country/population_growth), 50)
+    )
+    div
+    (: Current Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "africa"]
+      return
+        data($country/population[@year = "2011"])
+    ),
 
-  (: AMERICA :)
-  fn:sum (
-    for $country in $db//country[data(encompassed/@continent) = "america"]
-    return
-      data($country/population[@year = "2011"]) *
-      math:pow(data($country/population_growth), 50)
-  ),
+  (: AMERICAS futurepop/currentpop :)
+  $fPopRatioAmerica :=
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "america"]
+      return
+        data($country/population[@year = "2011"]) *
+        math:pow(data($country/population_growth), 50)
+    )
+    div
+    (: Current Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "america"]
+      return
+        data($country/population[@year = "2011"])
+    ),
 
   (: ASIA :)
-  fn:sum (
-    for $country in $db//country[data(encompassed/@continent) = "asia"]
-    return
-      data($country/population[@year = "2011"]) *
-      math:pow(data($country/population_growth), 50)
-  ),
+  $fPopRatioAsia :=
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "asia"]
+      return
+        data($country/population[@year = "2011"]) *
+        math:pow(data($country/population_growth), 50)
+    )
+    div
+    (: Current Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "asia"]
+      return
+        data($country/population[@year = "2011"])
+    ),
 
   (: AUSTRALIA  :)
-  fn:sum (
-    for $country in $db//country[data(encompassed/@continent) = "australia"]
-    return
-      data($country/population[@year = "2011"]) *
-      math:pow(data($country/population_growth), 50)
-  ),
+  $fPopRatioAustralia :=
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "australia"]
+      return
+        data($country/population[@year = "2011"]) *
+        math:pow(data($country/population_growth), 50)
+    )
+    div
+    (: Current Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "australia"]
+      return
+        data($country/population[@year = "2011"])
+    ),
 
   (: EUROPE  :)
-  fn:sum (
-    for $country in $db//country[data(encompassed/@continent) = "europe"]
-    return
-      data($country/population[@year = "2011"]) *
-      math:pow(data($country/population_growth), 50)
-  )
-),
-(: Get the max/min values of the calculations above :)
-$maxRes := max($allFuturePopSums),
-$minRes := min($allFuturePopSums)
+  $fPopRatioEurope :=
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "europe"]
+      return
+        data($country/population[@year = "2011"]) *
+        math:pow(data($country/population_growth), 50)
+    )
+    div
+    (: Current Population :)
+    fn:sum (
+      for $country in $db//country[data(encompassed/@continent) = "europe"]
+      return
+        data($country/population[@year = "2011"])
+    ),
 
-return $allFuturePopSums
+(: Get the max/min values of the calculations above :)
+$max :=
+max(
+  ($fPopRatioAfrica, $fPopRatioAmerica, $fPopRatioAsia,
+  $fPopRatioAustralia, $fPopRatioEurope)
+),
+
+$min := min(
+  ($fPopRatioAfrica, $fPopRatioAmerica, $fPopRatioAsia,
+  $fPopRatioAustralia, $fPopRatioEurope)
+)
+
+return $max
