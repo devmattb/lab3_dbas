@@ -33,4 +33,4 @@ return
                         $latepops[@lname/string() = $curr/@name/string()]/data() div $curr/data()
                 )}
         </country>
-return $popratio[data() >= 10]
+return $popratio[data() > 10]

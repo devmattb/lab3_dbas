@@ -11,4 +11,7 @@
 
 :)
 
-let $db := doc("songs.xml")
+let $db := doc("songs.xml"),
+$album := $db/album,
+$song := $db/song,
+$artist := $db/artist
