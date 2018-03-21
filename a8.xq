@@ -31,10 +31,14 @@ let $db := doc("mondial.xml"),
         for $city2 in $cities
         where data($city1/name) < data($city2/name)
         return
-          <triLeg city1="{$city1}" city2="{$city2}">
-            {
-              6371*math:acos(math:sin(data($city1/latitude)*math:pi() div 180)*math:sin(data($city2/latitude)*math:pi() div 180)+math:cos(data($city1/latitude)*math:pi() div 180)*math:cos(data($city2/latitude)*math:pi() div 180)*math:cos((data($city2/longitude)*math:pi() div 180)-(data($city1/longitude)*math:pi() div 180)))
-            }
+          <triLeg city1="{$city1/name}" city2="{$city2/name}">
+            {6371*2.0*2*
+              math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
+              (($city1/latitude/data()-$city2/latitude/data()) div 2.0)),2))+
+              (math:cos((3.14 div 180)*($city1/latitude/data()))*
+              math:cos((3.14 div 180)*($city2/latitude/data()))*
+              math:pow(math:sin((3.14 div 180)
+              *(($city1/longitude/data()-$city2/longitude/data()) div 2.0)),2))))}
           </triLeg>
       ),
 
@@ -46,9 +50,10 @@ let $db := doc("mondial.xml"),
         return (
           for $l3 in $triLegs
           (: Remove duplicates and:)
-          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2 and $l1/@city2 = $l2/@city1 and $l2/@city2 = $l3/@city1 and $l3/@city2 = $l1/@city1
+          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2
+          and $l1/@city1 = $l2/@city1 and $l2/@city2 = $l3/@city1
           return
-            <triangle city1="{$l1/@city1}" city2="{$l2/@city1}" city3="{$l3/@city1} - {$l3/@city2}">
+            <triangle city1="{$l1/@city1}" city2="{$l1/@city2}" city3="{$l3/@city1}">
                 {
                   data($l1) + data($l2) + data($l3)
                 }

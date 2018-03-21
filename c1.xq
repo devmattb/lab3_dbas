@@ -18,34 +18,11 @@
   2) The crossing number for each such group of countries.
 
 :)
-
-let $db := doc("mondial.xml"),
-    $borderingSweden := $db//country[@car_code = "S"]/border/@country
-
-(: Declare a function with two paramaters. Queue ($q) and Result ($res) :)
-declare function myFncs:reachable (
-  $q as element(country)*,
-  $res as element(country)*
-) as element(country)
+declare function local:identityFunction($v as xs:integer)
 {
-  (: The statements of the recursive function :)
-  if (empty($q)) then (
-    (: A country is not reachable from itself :)
-    tail($res)
-  ) else (
-    let
-      $current := head($q),
-      $tail := tail($q),
-      $others := $current/border/
-      return
-        myFncs:reachable(
-          ($tail, $borderingSweden/),
-          ()
-        )
-
-  )
-
+  $v
 };
+let $db := doc("mondial.xml")
 
-for $carCodes in $borderingSweden
-return myFncs:reachable($carCodes,())
+
+return local:identityFunction(17)
