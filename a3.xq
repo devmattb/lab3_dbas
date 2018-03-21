@@ -11,4 +11,9 @@
 
 :)
 
-let $db := doc("mondial.xml")
+let $db := doc("mondial.xml"),
+        $islandlakes := $db//island[@lake]/@lake,
+        $lakes := $db//lake[@id = $islandlakes]
+
+
+return $lakes
