@@ -42,14 +42,13 @@ declare function local:reach($queue as element(country)*, $allCountries as eleme
           :)
 
           (: All bordering COUNTRY CODES :)
-          $borderCountryCodes := $db//country[ @car_code = $current ]/border,
+          $borderCountryCodes := $db//country[ @car_code = $current/@car_code ]/border/@country,
 
            (: All bordering COUNTRIES that are in our $allowedCountries list. :)
           $okBorderCountries := $db/mondial[country = $allowedCountries]/country[ @car_code = $borderCountryCodes ],
 
           $newQueue := (tail($queue),$okBorderCountries)  (: oldQueue + newBorderingCountries :)
 
-          (: Count the number of crossings :)
           return (
             if ( empty($queue)) then (
 
