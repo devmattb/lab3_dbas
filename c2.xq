@@ -12,7 +12,7 @@
   Assignment:
   Generate a list of countries that are have the highest crossing
   number of possible bordercrossings to some other country, and
-  show which countries those most distant countries are foreach
+  show which countries those most distant countries are for each
   such starting country.
 
 :)
