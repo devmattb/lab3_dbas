@@ -17,14 +17,3 @@
 <album issued="2004" id="7002" label="Naxos Records" performers="Wiener Philharmoniker">Le Quattro Stagioni</album>
 
 </music>
-
-let $a := //artist[@isband="yes"]
-return count($a)
-
-//song[@genre="rocknroll"]/nr[.="1"]/../name
-
-for $s in //song
-for $art in //artist
-for $alb in //album
-where $s/@artist = $art/@id and $art/@isband="yes" and $s/@album = $alb/@id and $alb/@issued > 1985
-return <latebandsong>{data($s/name)}</latebandsong>
