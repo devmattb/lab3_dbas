@@ -27,34 +27,76 @@
     </crossing>
   </crossing>
 :)
-declare function local:reach($current as xs:string, $allCountries as element(country)*)
+declare function local:reach($queue as element(country)*, $allCountries as element(country)*, $numCrossings as xs:integer*)
 {
       (: Get all the bordering countries of the current country :)
       let $db := doc("mondial.xml"),
+          (: Our current visiting country :)
+          $current := head($queue),
+
           (: Remove the $current element from our "allCountries" element list:)
-          $newAllCountries := $allCountries[@car_code != $current],
-          (: Create a list of all the bordering countries, where they still exist in our $newAllCountries :)
-          $currentBorderingCountries := $db/mondial[country = $newAllCountries]/country[@car_code = $current]/border/@country
+          $allowedCountries := $allCountries[@car_code != $current/@car_code],
 
-      (: Make a recursive call for all such countries :)
-      for $c in $currentBorderingCountries
-      return (
-        if (empty($newAllCountries)) then (
+          (:
+              Create a list of all the bordering countries that still exist in our $allowedCountries
+          :)
 
-        )
-        else (
-          <crossing name="{$c}">
-            {
-                local:reach($c, $newAllCountries)
-            }
-          </crossing>
-        )
-      )
+          (: All bordering COUNTRY CODES :)
+          $borderCountryCodes := $db//country[ @car_code = $current ]/border,
+
+           (: All bordering COUNTRIES that are in our $allowedCountries list. :)
+          $okBorderCountries := $db/mondial[country = $allowedCountries]/country[ @car_code = $borderCountryCodes ],
+
+          $newQueue := (tail($queue),$okBorderCountries)  (: oldQueue + newBorderingCountries :)
+
+          (: Count the number of crossings :)
+          return (
+            if ( empty($queue)) then (
+
+            ) else (
+
+                  <crossing name="{$current/@car_code}" numCrossings="{head($numCrossings)}">
+                    {
+                      local:reach(
+                         $newQueue,
+                         $allowedCountries,
+                         tail($numCrossings)
+                      )
+                    }
+                  </crossing>
+             )
+          )
+
 
 
 };
 let $db := doc("mondial.xml"),
     $allCountries := $db//country,
-    $res := local:reach("S", $allCountries)
+    $sweden := $db//country[@car_code = "S"],
+    $res := local:reach(($sweden), $allCountries, (0))
 return
     $res
+
+
+    (:
+
+
+    return (
+      if ( empty($queue)) then (
+
+      ) else (
+
+            <crossing name="{$current/@car_code}" numCrossings="{head($numCrossings)}">
+              {
+                local:reach(
+                   $newQueue,
+                   $allowedCountries,
+                   tail($numCrossings)
+                )
+              }
+            </crossing>
+       )
+    )
+
+
+    :)
