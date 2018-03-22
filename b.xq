@@ -26,7 +26,7 @@ for $c in $countries
 return
         if(count(
         for $org in $ineurope
-        return $org[contains(members[1]/@country/string(), $c/@car_code/string())]) = 17)
+        return distinct-values($org[contains(members[1]/@country/string(), $c/@car_code/string())])) =count($ineurope))
         then $c
         else
         ()

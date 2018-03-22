@@ -22,15 +22,15 @@ return
 $latepops :=
 for $c in $country
 return
-        <country lname="{$c/@name/string()}">
+        <country lname="{$c/name/string()}">
                 {$c/population[@year = max($c/population/@year)]/data()}
         </country>,
 $popratio :=
 for $curr in $earlypops
 return
-        <country name="{$curr/@name/string()}">
+        <country name="{$curr/@name}">
                 {(
-                        $latepops[@lname/string() = $curr/@name/string()]/data() div $curr/data()
+                        $latepops[@lname = $curr/@name]/data() div $curr/data()
                 )}
         </country>
-return $popratio[data() > 10]
+return $popratio[data()>= 10]
