@@ -10,11 +10,9 @@
   border you’ve crossed already.
 
   Assignment:
-  Generate a list of countries that are have the highest crossing
+  Generate a list of countries that have the highest crossing
   number of possible bordercrossings to some other country, and
   show which countries those most distant countries are for each
   such starting country.
 
 :)
-
-let $db := doc("mondial.xml")

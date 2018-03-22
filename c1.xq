@@ -2,7 +2,7 @@
 
   ASSIGNMENT C1:
 
-  Background:
+  Backgorund:
   Consider land border crossings. Starting in Sweden, you can
   reach Norway and Finland with one border crossing. Russia with
   two. A whole host of countries with 3, and so on. This assumes,
@@ -17,43 +17,44 @@
    and
   2) The crossing number for each such group of countries.
 
-  GAMMAL: De ville ha svaret i form av XML taggar!
+
+  <crossing car_code="S" crossing_num="">
+    <crossing car_code="N" crossing_num="">
+      ...
+    </crossing>
+    <crossing car_code="FN" crossing_num="">
+      ...
+    </crossing>
+  </crossing>
 :)
-declare namespace functx = "http://www.functx.com";
-(: Function that checks if a value exists in a sequence :)
-declare function functx:is-value-in-sequence
-  ( $value as xs:anyAtomicType? ,
-    $seq as xs:anyAtomicType* )  as xs:boolean {
-
-   $value = $seq
- };
-
-declare function local:reach($current as xs:string, $visited as xs:string*)
+declare function local:reach($current as xs:string, $allCountries as element(country)*)
 {
-  (: If we haven't visited this country yet :)
-  return (
-    if ( functx:is-value-in-sequence($current,$visited) ) then (
+      (: Get all the bordering countries of the current country :)
+      let $db := doc("mondial.xml"),
+          (: Remove the $current element from our "allCountries" element list:)
+          $newAllCountries := $allCountries[@car_code != $current],
+          (: Create a list of all the bordering countries, where they still exist in our $newAllCountries :)
+          $currentBorderingCountries := $db/mondial[country = $newAllCountries]/country[@car_code = $current]/border/@country
 
-    (: Get all the bordering countries of the current country :)
-    let $db := doc("mondial.xml")
-    let $borderingCountries := $db//country[@car_code = $current]/border/@country
+      (: Make a recursive call for all such countries :)
+      for $c in $currentBorderingCountries
+      return (
+        if (empty($newAllCountries)) then (
 
-    (: Make a recursive call for all such countries :)
-    for $c in $borderingCountries
-    let $borderBorderingCountries := $db//country[@car_code = $c]/border/@country
-    return (
-      for $cc in $borderBorderingCountries
-      (: Call reach for this country's bordering countries ($cc), and Append this country ($c) to our visited sequence ("flat-list") :)
-      return local:reach($cc, insert-before($visited, count($visited), $c))
-    )
+        )
+        else (
+          <crossing name="{$c}">
+            {
+                local:reach($c, $newAllCountries)
+            }
+          </crossing>
+        )
+      )
 
-    )
-    (: We have visited this country already. :)
-    else (
-      return (: $visited <-- Exit function and return latest values. :)
-    )
-  )
+
 };
-
-let $res := local:reach("S", "")
-return $res
+let $db := doc("mondial.xml"),
+    $allCountries := $db//country,
+    $res := local:reach("S", $allCountries)
+return
+    $res
