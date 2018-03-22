@@ -37,4 +37,4 @@ let $nile := local:tributary($db//river[name/string() = 'Nile'], 'Nile', $db//ri
 let $amazonas := local:tributary($db//river[name/string() = 'Amazonas'], 'Amazonas', $db//river[name/string() = 'Nile']/length/data())
 let $rhein := local:tributary($db//river[name/string() = 'Rhein'], 'Rhein', $db//river[name/string() = 'Nile']/length/data())
 
-return $nile[data() = max($nile/data())]
+return ($nile[data() = max($nile/data())], $rhein[data() = max($rhein/data())], $amazonas[data() = max($amazonas/data())])
