@@ -14,7 +14,7 @@
 
 
 let $db := doc("songs.xml"),
-$trying :=
+$newdb :=
     element music {
         for $subelem in $db//music/*
         return
@@ -23,4 +23,4 @@ $trying :=
                         (for $attr in $subelem/@* return element {name($attr)}{$attr/data()}) }
     }
 
-return $trying
+return $newdb
