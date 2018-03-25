@@ -22,8 +22,7 @@ $newmusic :=
             return (
               for $attrib in $e/@*
               return (
-                <{$attrib}>
-                </{$attrib}>
+                name($attrib), $attrib/string(), '&#xA;'
               )
             )
 
