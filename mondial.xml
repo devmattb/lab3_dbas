@@ -61495,7 +61495,7 @@ United Nations Relief and Works Agency for Palestine Refugees in the Near East
 		<located country="EAT" province="prov-Tanzania-19 prov-Tanzania-20 prov-Tanzania-21 prov-Tanzania-30 prov-Tanzania-31" />
 		<located country="EAU" province="prov-EAU-1 prov-EAU-2" />
 		<to water="river-ViktoriaNil" watertype="river" />
-		<area>68870</area>
+		<area>68800</area>
 		<latitude>-1</latitude>
 		<longitude>33</longitude>
 		<elevation>1134</elevation>
