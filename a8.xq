@@ -22,7 +22,7 @@
 
 let $db := doc("mondial.xml"),
     (: GRAB ALL CITIES THAT MATCH OUR SPECIFICATIONS :)
-    $cities := $db//city[data(population[@year = "2011"]) >= 5000000 ],
+    $cities := $db//city[data(population) >= 5000000 ],
 
     (: GENERATE ALL COMBINATIONS OF LENGTHS BETWEEN THE CHOSEN CITIES :)
     $triLegs :=
@@ -30,10 +30,11 @@ let $db := doc("mondial.xml"),
       return (
         for $city2 in $cities
         where data($city1/name) < data($city2/name)
+        (: Haversine... :)
         return
           <triLeg city1="{$city1/name}" city2="{$city2/name}">
             {
-              6371*2.0*2*math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
+              6371*2.0*math:asin(math:sqrt((math:pow(math:sin((3.14 div 180)*
               (($city1/latitude/data()-$city2/latitude/data()) div 2.0)),2))+
               (math:cos((3.14 div 180)*($city1/latitude/data()))*
               math:cos((3.14 div 180)*($city2/latitude/data()))*
@@ -50,9 +51,9 @@ let $db := doc("mondial.xml"),
         for $l2 in $triLegs
         return (
           for $l3 in $triLegs
-          (: Remove duplicates and:)
-          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2
-          and $l1/@city1 = $l2/@city1 and $l2/@city2 = $l3/@city1
+          (: Remove duplicates of these combinations :)
+          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2 and $l1/@city1 = $l2/@city1
+          and $l2/@city2 = $l3/@city1 and $l3/@city2 = $l1/@city2
           return
             <triangle city1="{$l1/@city1}" city2="{$l1/@city2}" city3="{$l3/@city1}">
                 {

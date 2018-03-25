@@ -2,7 +2,7 @@
 
   ASSIGNMENT C1:
 
-  Backgorund:
+  Background:
   Consider land border crossings. Starting in Sweden, you can
   reach Norway and Finland with one border crossing. Russia with
   two. A whole host of countries with 3, and so on. This assumes,
@@ -51,37 +51,41 @@
 
   };
 
-  declare function local:getDepth($depth as xs:decimal*, $maxdepth as xs:decimal*, $countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
+  declare function local:getDepth($depth as xs:decimal*, $maxDepth as xs:decimal*, $countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
 
-    if ($depth = $maxdepth) then (
-      (: We've reached the deepest depth. Return all country Id's we can reach from this point. :)
+    if ($depth = $maxDepth) then (
+      (: We've reached the correct depth. Return the bordering countries to all $countries :)
       for $c in $countries
       return local:getBorderingCountries($c, $allowedCountryIds)
     ) else (
-      (: We haven't reached maximum depth just yet. :)
+      (: We're not on the correct depth yet! We need to go deeper! :)
       (: Get the bordering countries for each country in out $countries list. :)
       for $c in $countries
       let $b := local:getBorderingCountries($c,$allowedCountryIds),
           (: Remove the list of bordering countries $b to this country $c from our $allowedCountries list, before proceeding. :)
           $updatedAllowedCountries := functx:value-except($allowedCountryIds, $b)
           (: Go to deeper. :)
-          return local:getDepth( $depth+1, $maxdepth, $b, $updatedAllowedCountries)
+      return local:getDepth( $depth+1, $maxDepth, $b, $updatedAllowedCountries)
     )
 
   };
 
   declare function local:reach($depth as xs:decimal*, $currentCountries as xs:string*, $allowedCountryIds as xs:string*) as element()*
   {
+    (: Get all the bordering countries to the $currentCountries, that we haven't visted yet. :)
     let $reachable := local:getDepth(1,$depth, $currentCountries, $allowedCountryIds),
-        (: Remove the list of reachable countries from the allowedCountries list, before proceeding. :)
+        (: Remove the list of reachable countries from the $allowedCountryIds list, before proceeding to next recursive call. :)
         $updatedAllowedCountries := functx:value-except($allowedCountryIds, $reachable)
 
     return (
 
       if (empty($reachable)) then (
-         (: Do nothing. No reachable countries left. :)
+         (: There were no bordering countries to our $currentCountries list that we hadn't visited already. :)
       ) else (
-        (: There are still some reachable countries to display. Go deeper. :)
+        (:
+            There were some bordering countries to our $currentCountries list that we hadn't visited yet!
+            Make note of all the $reachable countries, the current $depth, and go deeper with local:reach().
+        :)
         <crossing depth="{$depth}" reaches="{$reachable}">
           {local:reach($depth+1, $reachable, $updatedAllowedCountries)}
         </crossing>

@@ -2,7 +2,7 @@
 
   ASSIGNMENT C2:
 
-  Backgorund:
+  Background:
   Consider land border crossings. Starting in Sweden, you can
   reach Norway and Finland with one border crossing. Russia with
   two. A whole host of countries with 3, and so on. This assumes,
@@ -15,8 +15,9 @@
   show which countries those most distant countries are for each
   such starting country.
 
-:)
+  "most distant" := at the longest reach of crossing depth.
 
+:)
 
 
   (: Import Functions :)
@@ -51,38 +52,47 @@
 
   };
 
-  declare function local:getDepth($depth as xs:decimal*, $maxdepth as xs:decimal*, $countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
+  declare function local:getDepth($depth as xs:decimal*, $maxDepth as xs:decimal*, $countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
 
-    if ($depth = $maxdepth) then (
-      (: We've reached the deepest depth. Return all country Id's we can reach from this point. :)
+    if ($depth = $maxDepth) then (
+      (: We've reached the correct depth. Return the bordering countries to all $countries :)
       for $c in $countries
       return local:getBorderingCountries($c, $allowedCountryIds)
     ) else (
-      (: We haven't reached maximum depth just yet. :)
+      (: We're not on the correct depth yet! We need to go deeper! :)
       (: Get the bordering countries for each country in out $countries list. :)
       for $c in $countries
       let $b := local:getBorderingCountries($c,$allowedCountryIds),
-          (: Remove the list of bordering countries $b to this country $c from our $allowedCountryIds list, before proceeding. :)
+          (: Remove the list of bordering countries $b to this country $c from our $allowedCountries list, before proceeding. :)
           $updatedAllowedCountries := functx:value-except($allowedCountryIds, $b)
           (: Go to deeper. :)
-          return local:getDepth( $depth+1, $maxdepth, $b, $updatedAllowedCountries)
+      return local:getDepth( $depth+1, $maxDepth, $b, $updatedAllowedCountries)
     )
 
   };
 
   declare function local:reach($depth as xs:decimal*, $currentCountries as xs:string*, $allowedCountryIds as xs:string*) as element()*
   {
+    (: Get all the bordering countries to the $currentCountries, that we haven't visted yet. :)
     let $reachable := local:getDepth(1,$depth, $currentCountries, $allowedCountryIds),
-        (: Remove the list of reachable countries from the allowedCountries list, before proceeding. :)
+        (: Remove the list of reachable countries from the $allowedCountryIds list, before proceeding to next recursive call. :)
         $updatedAllowedCountries := functx:value-except($allowedCountryIds, $reachable)
 
     return (
 
       if (empty($reachable)) then (
-         (: Do nothing. No reachable countries left. :)
+         (: There were no bordering countries to our $currentCountries list that we hadn't visited already. :)
       ) else (
-        (: There are still some reachable countries to display. Go deeper. :)
-        <crossing depth="{$depth}" reaches="{$reachable}">
+        (:
+            There were some bordering countries to our $currentCountries list that we hadn't visited yet!
+            Make note of all the $reachable countries, the current $depth, and go deeper with local:reach().
+
+            NOTE:
+            Added a <posCrossings> tag, that lists all the possible crossings from this
+            particular country, and holds which countries those are!
+        :)
+        <crossing depth="{$depth}" reaches="">
+          <posCrossings num="{count($reachable)}">{$reachable}</posCrossings>
           {local:reach($depth+1, $reachable, $updatedAllowedCountries)}
         </crossing>
       )
@@ -93,6 +103,10 @@
 
   let $db := doc("mondial.xml"),
       $countryCount :=
+        (:
+           For each country, do the same calculation as in the previous assignment,
+           since we want the most distant border countries to a country.
+        :)
         for $c in $db//country
         let $carCode := $c/@car_code,
             $allowedCountryIds := $db//country[ @car_code != $carCode ]/@car_code
@@ -101,15 +115,14 @@
             {local:reach(1, $carCode, $allowedCountryIds)}
           </country>
         ),
-      (: :)
+      (: Gather all countries with the maximum number of possible crossings / border countries ! :)
       $maxCount := $countryCount[sum(.//@num/data()) = max($countryCount/sum(.//@num/data()))]
 
-  (:  :)
+  (:  For each of the countries with the max number of crossings... :)
   for $c in $maxCount
-  (: OBS! Replace $maxCount with $c for alternative solution, depending on how the assignment is interpreted. :)
-  (: Only grab the max depth crossing of this country :)
+  (: Return only those crossings within max-crossing-countries that have the max crossing depth. :)
   return (
     <country name="{$c/@name/data()}">
-      {$c//crossing[@depth/data() = max($maxCount//crossing/@depth)]}
+      {$c//crossing[@depth/data() = max($c//crossing/@depth)]}
     </country>
   )
