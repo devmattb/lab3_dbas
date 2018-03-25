@@ -18,11 +18,28 @@ $album := $db//album,
 $song := $db//song,
 $artist := $db//artist,
 $newmusic :=
-          <music>
-          {
-            for $e in $db//element(*)
-            return $e
-          }
-          </music>
+            for $e in $db/music/element(*)
+            return (
+              for $attrib in $e/@*
+              return (
+                <{$attrib}>
+                </{$attrib}>
+              )
+            )
+
+
 
 return $newmusic
+
+
+(:
+
+Turn all the sub-elements to attributes
+
+{
+
+  for $subElem in $e/*
+  return concat(concat(node-name($e/*),"="), data($e/*))
+}
+
+:)
