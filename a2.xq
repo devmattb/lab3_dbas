@@ -6,13 +6,8 @@
   to total number of provinces.
 :)
 
-let $test := distinct-values(
-    let $db := doc("mondial.xml"),
-    $numInland := number(count($db//province[ not(//located_at) ])),
-    $numTotal := number(count($db//province))
-    return number(count($db//province/city[located_at]/..))
-)
-return $test
+let $db := doc("mondial.xml"),
+$numInland := number(count($db//province[count(city/located_at[@watertype="sea"])=0])),
+$numTotal := number(count($db//province))
+return $numInland div $numTotal 
 
-
-  (:    number(count($db//province/city[not(located_at)]/..))    :)
