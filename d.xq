@@ -19,7 +19,10 @@ $newdb :=
         for $subelem in $db//music/*
         return
            element {(name($subelem))}
-                    { (for $subsub in $subelem/* return attribute {name($subsub)} {$subsub/data()}),
+                    { (
+                         if (not(empty($subelem/*)))
+                         then (for $subsub in $subelem/* return attribute {name($subsub)} {$subsub/data()})
+                         else (attribute {"value"} {$subelem/data()})),
                         (for $attr in $subelem/@* return element {name($attr)}{$attr/data()}) }
     }
 
