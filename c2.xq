@@ -10,7 +10,7 @@
   border you’ve crossed already.
 
   Assignment:
-  Generate a list of countries that have the highest crossing
+  Generate a list of countries that have the highest
   number of possible bordercrossings to some other country, and
   show which countries those most distant countries are for each
   such starting country.
@@ -74,7 +74,7 @@
   declare function local:reach($depth as xs:decimal*, $currentCountries as xs:string*, $allowedCountryIds as xs:string*) as element()*
   {
     (: Get all the bordering countries to the $currentCountries, that we haven't visted yet. :)
-    let $reachable := local:getDepth(1,$depth, $currentCountries, $allowedCountryIds),
+    let $reachable := distinct-values(local:getDepth(1, 1, $currentCountries, $allowedCountryIds)),
         (: Remove the list of reachable countries from the $allowedCountryIds list, before proceeding to next recursive call. :)
         $updatedAllowedCountries := functx:value-except($allowedCountryIds, $reachable)
 
@@ -91,8 +91,8 @@
             Added a <posCrossings> tag, that lists all the possible crossings from this
             particular country, and holds which countries those are!
         :)
-        <crossing depth="{$depth}" reaches="">
-          <posCrossings num="{count($reachable)}">{$reachable}</posCrossings>
+        <crossing depth="{$depth}" reaches="{$reachable}">
+          <posCrossings num="{count($reachable)}"></posCrossings>
           {local:reach($depth+1, $reachable, $updatedAllowedCountries)}
         </crossing>
       )
@@ -123,6 +123,6 @@
   (: Return only those crossings within max-crossing-countries that have the max crossing depth. :)
   return (
     <country name="{$c/@name/data()}">
-      {$c//crossing[@depth/data() = max($c//crossing/@depth)]}
+      {$c//crossing[@depth/data() = max($maxCount//crossing/@depth)]}
     </country>
   )

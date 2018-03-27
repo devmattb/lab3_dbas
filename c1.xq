@@ -73,7 +73,7 @@
   declare function local:reach($depth as xs:decimal*, $currentCountries as xs:string*, $allowedCountryIds as xs:string*) as element()*
   {
     (: Get all the bordering countries to the $currentCountries, that we haven't visted yet. :)
-    let $reachable := local:getDepth(1,$depth, $currentCountries, $allowedCountryIds),
+    let $reachable := distinct-values(local:getDepth(1,1, $currentCountries, $allowedCountryIds)),
         (: Remove the list of reachable countries from the $allowedCountryIds list, before proceeding to next recursive call. :)
         $updatedAllowedCountries := functx:value-except($allowedCountryIds, $reachable)
 
