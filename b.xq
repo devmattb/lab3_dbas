@@ -6,9 +6,6 @@
   whose names start with the word “International” and
   are headquartered in Europe?
 
-  JOHAN, TA DENNA SÅ TAR JAG c1/c2
-
-
   Steg 1: Ta fram all organixationer som heter international och har huvudkontor
   i europa.
   Steg 2: Ta fram organizationen och räkna upp alla memberländer
@@ -24,9 +21,10 @@ $countries := $db//country,
 $orgwithmembers :=
 for $c in $countries
 return
-        if(count(
+        if
+        (count(
         for $org in $ineurope
-        return distinct-values($org[contains(members[1]/@country/string(), $c/@car_code/string())])) =count($ineurope))
+        return $org[contains(members[1]/@country/string(), $c/@car_code/string())]) = count($ineurope))
         then $c
         else
         ()
