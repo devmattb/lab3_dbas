@@ -9,4 +9,4 @@
 let $db := doc("mondial.xml"),
 $numInland := number(count($db//province[count(city/located_at[@watertype="sea"])=0])),
 $numTotal := number(count($db//province))
-return <ratio>$numInland div $numTotal </ratio>
+return <ratio> {$numInland div $numTotal} </ratio>
