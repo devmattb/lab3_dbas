@@ -10,7 +10,7 @@
 
 :)
 
-declare function local:tributary($curr as element(river), $base as xs:string, $length as xs:double)
+declare function local:tributary($curr as element(river), $base as xs:string, $length as xs:double) as element()*
 {
         let $db := doc("mondial.xml")
         let $tributary := $db//river[to[@watertype="river"] and contains(to/@water, $curr/@id)]
