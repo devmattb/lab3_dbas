@@ -15,5 +15,5 @@ let $db := doc("mondial.xml"),
                 else
                 $c
 
-return $res/name/string()
+return $res/name
 (: If there's no located_on attribute, then the country does not have any islands. :)
