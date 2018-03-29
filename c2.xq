@@ -84,7 +84,7 @@
   };
 
   let $db := doc("mondial.xml"),
-      $countryCount :=
+      $countryCrossings :=
         (:
            For each country, do the same calculation as in the previous assignment,
            since we want the most distant border countries to a country.
@@ -99,12 +99,12 @@
         )
 
   (:  For each of the countries with the max number of crossings... :)
-  for $c in $countryCount
+  for $c in $countryCrossings
   (: Return only those crossings within max-crossing-countries that have the max crossing depth. :)
   return (
-    if ($c//crossing/@depth/data() = max($countryCount//crossing/@depth)) then (
+    if ($c//crossing/@depth/data() = max($countryCrossings//crossing/@depth)) then (
     <country name="{$c/@name/data()}">
-      {$c//crossing[@depth/data() = max($countryCount//crossing/@depth)]}
+      {$c//crossing[@depth/data() = max($countryCrossings//crossing/@depth)]}
     </country>
     ) else (
 
