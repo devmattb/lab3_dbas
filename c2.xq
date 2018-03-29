@@ -96,15 +96,18 @@
           <country name="{$carCode}">
             {local:reach(1, $carCode, $allowedCountryIds)}
           </country>
-        ),
-      (: Gather all countries with the maximum number of possible crossings / border countries ! :)
-      $maxCount := $countryCount[sum(.//@num/data()) = max($countryCount/sum(.//@num/data()))]
+        )
 
   (:  For each of the countries with the max number of crossings... :)
-  for $c in $maxCount
+  for $c in $countryCount
   (: Return only those crossings within max-crossing-countries that have the max crossing depth. :)
   return (
+    if ($c//crossing/@depth/data() = max($countryCount//crossing/@depth)) then (
     <country name="{$c/@name/data()}">
-      {$c//crossing[@depth/data() = max($maxCount//crossing/@depth)]}
+      {$c//crossing[@depth/data() = max($countryCount//crossing/@depth)]}
     </country>
+    ) else (
+
+
+    )
   )
