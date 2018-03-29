@@ -22,7 +22,7 @@
 
 let $db := doc("mondial.xml"),
     (: GRAB ALL CITIES THAT MATCH OUR SPECIFICATIONS :)
-    $cities := $db//city[data(population) >= 5000000 ],
+    $cities := $db//city[data(population) > 5000000 ],
 
     (: GENERATE ALL COMBINATIONS OF LENGTHS BETWEEN THE CHOSEN CITIES :)
     $triLegs :=
@@ -52,8 +52,8 @@ let $db := doc("mondial.xml"),
         return (
           for $l3 in $triLegs
           (: Remove duplicates of these combinations :)
-          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2 and $l1/@city1 = $l2/@city1
-          and $l2/@city2 = $l3/@city1 and $l3/@city2 = $l1/@city2
+          where $l1/@city1 < $l1/@city2 and $l1/@city1 < $l2/@city2 and $l1/@city2 < $l2/@city2
+          and $l1/@city1 = $l2/@city1 and $l2/@city2 = $l3/@city1 and $l3/@city2 = $l1/@city2
           return
             <triangle city1="{$l1/@city1}" city2="{$l1/@city2}" city3="{$l3/@city1}">
                 {
