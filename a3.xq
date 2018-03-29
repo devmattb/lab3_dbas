@@ -1,5 +1,5 @@
 (:
-  ASIGNMENT 3:
+  ASSIGNMENT 3:
 
   Generate a table of all the continents and
   the sum of the areas of all those lakes that

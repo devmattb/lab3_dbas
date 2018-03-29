@@ -51,29 +51,18 @@
 
   };
 
-  declare function local:getDepth($depth as xs:decimal*, $maxDepth as xs:decimal*, $countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
+  declare function local:getDepth($countries as xs:string*, $allowedCountryIds as xs:string*) as xs:string* {
 
-    if ($depth = $maxDepth) then (
       (: We've reached the correct depth. Return the bordering countries to all $countries :)
       for $c in $countries
       return local:getBorderingCountries($c, $allowedCountryIds)
-    ) else (
-      (: We're not on the correct depth yet! We need to go deeper! :)
-      (: Get the bordering countries for each country in out $countries list. :)
-      for $c in $countries
-      let $b := local:getBorderingCountries($c,$allowedCountryIds),
-          (: Remove the list of bordering countries $b to this country $c from our $allowedCountries list, before proceeding. :)
-          $updatedAllowedCountries := functx:value-except($allowedCountryIds, $b)
-          (: Go to deeper. :)
-      return local:getDepth( $depth+1, $maxDepth, $b, $updatedAllowedCountries)
-    )
 
   };
 
   declare function local:reach($depth as xs:decimal*, $currentCountries as xs:string*, $allowedCountryIds as xs:string*) as element()*
   {
     (: Get all the bordering countries to the $currentCountries, that we haven't visted yet. :)
-    let $reachable := distinct-values(local:getDepth(1,1, $currentCountries, $allowedCountryIds)),
+    let $reachable := distinct-values(local:getDepth($currentCountries, $allowedCountryIds)),
         (: Remove the list of reachable countries from the $allowedCountryIds list, before proceeding to next recursive call. :)
         $updatedAllowedCountries := functx:value-except($allowedCountryIds, $reachable)
 
